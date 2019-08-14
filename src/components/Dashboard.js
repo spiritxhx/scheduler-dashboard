@@ -31,25 +31,35 @@ class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: false, 
+      loading: false,
       focused: null
     };
   }
 
+  selectPanel = id => {
+    this.setState({
+      focused: id
+    });
+  };
+
   render() {
-    const dashboardClasses = classnames("dashboard");
+    const dashboardClasses = classnames("dashboard", {
+      "dashboard--focused": this.state.focused
+    });
 
     if (this.state.loading) {
       return <Loading />;
     }
 
-    return (
-      <main className={dashboardClasses}>
-        {data.map(singleData => {
-          return <Panel key={singleData.id} {...singleData} />;
-        })}
-      </main>
-    );
+    const panels = data
+      .filter(
+        panel => this.state.focused === null || this.state.focused === panel.id
+      )
+      .map(panel => (
+        <Panel key={panel.id} {...panel} onSelect={this.selectPanel} />
+      ));
+
+    return <main className={dashboardClasses}>{panels}</main>;
   }
 }
 
